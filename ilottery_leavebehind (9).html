@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pass iLottery — Leave-Behind</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,800;0,9..144,900;1,9..144,300;1,9..144,400;1,9..144,600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f2742;
+    --paper: #f5f0e4;
+    --paper-2: #ebe3d1;
+    --rule: #d9cfb7;
+    --accent: #b83a2a;
+    --money: #2f7d4f;
+    --gold: #c9a24a;
+    --muted: #7a7464;
+    --display: 'Fraunces', Georgia, serif;
+    --numeric: 'Archivo', 'Inter Tight', system-ui, sans-serif;
+    --sans: 'Inter Tight', -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #ddd3bb;
+    font-family: var(--sans);
+    color: var(--ink);
+    padding: 24px 16px;
+    line-height: 1.4;
+  }
+
+  .poster {
+    width: 816px;
+    max-width: 100%;
+    margin: 0 auto;
+    background: var(--paper);
+    aspect-ratio: 8.5 / 11;
+    padding: 32px 48px 0;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .poster::before {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    border: 1px solid var(--rule);
+    pointer-events: none;
+  }
+
+  /* Masthead */
+  .mast {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1.5px solid var(--ink);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    position: relative;
+    z-index: 1;
+  }
+  .mast .brand { font-weight: 600; color: var(--ink); }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 18px 0 16px;
+    border-bottom: 3px double var(--ink);
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  .hero .deck {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 12px;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.45;
+  }
+  .hero .deck strong {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* ===== HEADLINE PAIR: profit + teacher pay ===== */
+  .headline-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--rule);
+    position: relative;
+    z-index: 1;
+  }
+  .hp-card {
+    padding: 18px 20px;
+    text-align: center;
+    position: relative;
+  }
+  .hp-card + .hp-card { border-left: 1px solid var(--rule); }
+  .hp-icon {
+    width: 26px;
+    height: 26px;
+    margin: 0 auto 8px;
+    display: block;
+  }
+  .hp-label {
+    font-size: 10px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .hp-flow {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .hp-from {
+    font-family: var(--numeric);
+    font-weight: 800;
+    font-size: 26px;
+    color: var(--muted);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .hp-arrow {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 22px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .hp-to {
+    font-family: var(--numeric);
+    font-weight: 900;
+    font-size: 56px;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+  .hp-card.education .hp-to { color: var(--money); }
+  .hp-card.education .hp-icon { color: var(--money); }
+  .hp-card.teacher .hp-to { color: var(--money); }
+  .hp-card.teacher .hp-icon { color: var(--accent); }
+  .hp-caption {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.35;
+  }
+  .hp-caption strong {
+    font-style: normal;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .hp-caption .plus {
+    color: var(--accent);
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  /* ===== STIPEND STRIP (demoted to inline row) ===== */
+  .stipend-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 10px 18px;
+    margin-bottom: 16px;
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    position: relative;
+    z-index: 1;
+  }
+  .stipend-strip .ss-label {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .stipend-strip .ss-label strong {
+    font-style: normal;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .stipend-strip .ss-tiers {
+    display: flex;
+    gap: 20px;
+    align-items: baseline;
+  }
+  .ss-tier {
+    font-family: var(--numeric);
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--money);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .ss-tier .role {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0;
+  }
+
+  /* ===== HOW IT WORKS (two-column) ===== */
+  .how {
+    padding: 16px 0 16px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+    position: relative;
+    z-index: 1;
+  }
+  .how-col { display: flex; gap: 14px; align-items: flex-start; }
+  .how-icon {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    margin-top: 4px;
+    color: var(--ink);
+  }
+  .how-icon.green { color: var(--money); }
+  .how-col .eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .how-col .lead {
+    font-family: var(--numeric);
+    font-weight: 900;
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .how-col .lead.italic {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.015em;
+    color: var(--money);
+  }
+  .how-col .lead sup {
+    font-family: var(--numeric);
+    font-size: 0.4em;
+    font-weight: 800;
+    color: var(--accent);
+    vertical-align: super;
+    position: relative;
+    top: -0.5em;
+  }
+  .how-col .txt {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .how-col .txt strong { font-weight: 700; color: var(--money); }
+
+  /* ===== EVIDENCE ===== */
+  .evidence {
+    padding: 18px 0 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .ev-head {
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .ev-head .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .ev-head .eyebrow svg {
+    width: 14px;
+    height: 14px;
+    color: var(--money);
+  }
+  .ev-head .h {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .ev-head .h em {
+    font-style: italic;
+    font-weight: 600;
+    color: var(--money);
+  }
+  .ev-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  .ev-card .lbl-state {
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .ev-big {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .ev-pct {
+    font-family: var(--numeric);
+    font-weight: 900;
+    font-size: 46px;
+    line-height: 1;
+    color: var(--money);
+    letter-spacing: -0.04em;
+  }
+  .ev-desc {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 1.3;
+    color: var(--muted);
+  }
+  .ev-bar-row {
+    display: grid;
+    grid-template-columns: 44px 1fr 54px;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .ev-bar-row .lbl {
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .bar {
+    height: 10px;
+    background: var(--paper-2);
+  }
+  .bar .fill { height: 100%; }
+  .bar .fill.before { background: var(--rule); }
+  .bar .fill.after { background: var(--ink); }
+  .ev-bar-row .amt {
+    font-family: var(--numeric);
+    font-weight: 800;
+    font-size: 12px;
+    text-align: right;
+    letter-spacing: -0.02em;
+  }
+
+  /* ===== RED CTA ===== */
+  .cta {
+    margin: 0 -48px;
+    margin-top: auto;
+    padding: 20px 48px;
+    background: var(--accent);
+    color: var(--paper);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  .cta .tag {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 23px;
+    letter-spacing: -0.015em;
+    line-height: 1;
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .cta .tag-icon {
+    width: 30px;
+    height: 30px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .cta .tag em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--gold);
+  }
+  .cta .note {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(245,240,228,0.85);
+    text-align: right;
+    line-height: 1.6;
+    font-weight: 600;
+  }
+
+  @media (max-width: 860px) {
+    body { padding: 12px 8px; }
+    .poster { padding: 28px 24px 0; aspect-ratio: auto; }
+    .hero h1 { font-size: 30px; }
+    .headline-pair { grid-template-columns: 1fr; }
+    .hp-card + .hp-card { border-left: none; border-top: 1px solid var(--rule); }
+    .hp-to { font-size: 48px; }
+    .stipend-strip { flex-direction: column; gap: 10px; }
+    .stipend-strip .ss-tiers { flex-wrap: wrap; justify-content: center; }
+    .how { grid-template-columns: 1fr; gap: 20px; }
+    .ev-grid { grid-template-columns: 1fr; gap: 24px; }
+    .ev-pct { font-size: 40px; }
+    .cta { margin: 0 -24px; padding: 18px 24px; flex-direction: column; gap: 10px; align-items: flex-start; }
+    .cta .note { text-align: left; }
+  }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .poster { box-shadow: none; width: 100%; aspect-ratio: auto; border: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SVG ICONS -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-school" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9 L12 4 L21 9 L21 20 L3 20 Z"/>
+      <path d="M8 20 L8 13 L16 13 L16 20"/>
+      <line x1="12" y1="4" x2="12" y2="2"/>
+      <path d="M10 2 L14 2"/>
+    </symbol>
+    <symbol id="i-apple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 5 C 10 3, 8 3, 7 5 C 4 5, 3 8, 3 12 C 3 17, 6 21, 9 21 C 10.5 21, 11 20.3, 12 20.3 C 13 20.3, 13.5 21, 15 21 C 18 21, 21 17, 21 12 C 21 8, 20 5, 17 5 C 16 3, 14 3, 12 5 Z"/>
+      <path d="M12 5 C 12 4, 13 3, 14.5 3"/>
+    </symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="6" y="2" width="12" height="20" rx="2"/>
+      <circle cx="12" cy="18" r="0.5" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-store" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9 L4 3 L20 3 L21 9"/>
+      <path d="M4 9 L4 21 L20 21 L20 9"/>
+      <path d="M3 9 L21 9"/>
+      <path d="M9 21 L9 14 L15 14 L15 21"/>
+    </symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="3 17 9 11 13 15 21 7"/>
+      <polyline points="14 7 21 7 21 14"/>
+    </symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round">
+      <polygon points="12 2 15 9 22 9.5 17 14.5 18.5 22 12 18 5.5 22 7 14.5 2 9.5 9 9"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="poster">
+
+  <div class="mast">
+    <span class="brand">Oklahoma Lottery Commission</span>
+    <span>Legislative Brief</span>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Every year without iLottery,<br/>Oklahoma <em>underpays its teachers.</em></h1>
+    <div class="deck">Every dollar of lottery profit above $65M goes <strong>straight to teacher pay.</strong> iLottery puts more dollars over that line — without changing a single game.</div>
+  </div>
+
+  <!-- HEADLINE PAIR: two big outcomes -->
+  <div class="headline-pair">
+    <div class="hp-card education">
+      <svg class="hp-icon"><use href="#i-school"/></svg>
+      <div class="hp-label">Profit to Education / Year</div>
+      <div class="hp-flow">
+        <span class="hp-from">$82M</span>
+        <span class="hp-arrow">→</span>
+        <span class="hp-to">$98M</span>
+      </div>
+      <div class="hp-caption"><span class="plus">+$16M</span> in new profit, <strong>100% to education by law.</strong></div>
+    </div>
+    <div class="hp-card teacher">
+      <svg class="hp-icon"><use href="#i-apple"/></svg>
+      <div class="hp-label">Teacher Pay / Year</div>
+      <div class="hp-flow">
+        <span class="hp-from">$17M</span>
+        <span class="hp-arrow">→</span>
+        <span class="hp-to">$33M</span>
+      </div>
+      <div class="hp-caption"><strong>Nearly double</strong> — funded entirely by dollars above the $65M threshold.</div>
+    </div>
+  </div>
+
+  <!-- Stipend strip -->
+  <div class="stipend-strip">
+    <div class="ss-label"><strong>Teacher Empowerment Fund</strong> stipends:</div>
+    <div class="ss-tiers">
+      <div class="ss-tier">+$3K<span class="role">Advanced</span></div>
+      <div class="ss-tier">+$5K<span class="role">Lead</span></div>
+      <div class="ss-tier">+$10K<span class="role">Master</span></div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS: two-column -->
+  <div class="how">
+    <div class="how-col">
+      <svg class="how-icon"><use href="#i-phone"/></svg>
+      <div>
+        <div class="eyebrow">Where It Comes From</div>
+        <div class="lead">+$150M<sup>1</sup></div>
+        <div class="txt"><strong>in projected new annual sales</strong> once iLottery is authorized — capturing online play already happening offshore.</div>
+      </div>
+    </div>
+    <div class="how-col">
+      <svg class="how-icon green"><use href="#i-store"/></svg>
+      <div>
+        <div class="eyebrow">What It Doesn't Touch</div>
+        <div class="lead italic">Brick-and-mortar grows.</div>
+        <div class="txt"><strong>In-store sales increased</strong> in every iLottery state. No cannibalization of convenience stores or ticket sellers.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVIDENCE -->
+  <div class="evidence">
+    <div class="ev-head">
+      <div class="eyebrow"><svg><use href="#i-trend"/></svg>Proven in 14+ States</div>
+      <div class="h">Education funding grew in <em>every state</em> that authorized iLottery.</div>
+    </div>
+    <div class="ev-grid">
+      <div class="ev-card">
+        <div class="lbl-state">New Hampshire</div>
+        <div class="ev-big">
+          <div class="ev-pct">+250%</div>
+          <div class="ev-desc">increase in annual<br/>education funding</div>
+        </div>
+        <div class="ev-bar-row">
+          <span class="lbl">Before</span>
+          <div class="bar"><div class="fill before" style="width:28%"></div></div>
+          <span class="amt">$59M</span>
+        </div>
+        <div class="ev-bar-row">
+          <span class="lbl">After</span>
+          <div class="bar"><div class="fill after" style="width:100%"></div></div>
+          <span class="amt">$207M</span>
+        </div>
+      </div>
+      <div class="ev-card">
+        <div class="lbl-state">Virginia</div>
+        <div class="ev-big">
+          <div class="ev-pct">+57%</div>
+          <div class="ev-desc">increase in annual<br/>education funding</div>
+        </div>
+        <div class="ev-bar-row">
+          <span class="lbl">Before</span>
+          <div class="bar"><div class="fill before" style="width:64%"></div></div>
+          <span class="amt">$595M</span>
+        </div>
+        <div class="ev-bar-row">
+          <span class="lbl">After</span>
+          <div class="bar"><div class="fill after" style="width:100%"></div></div>
+          <span class="amt">$934M</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RED CTA -->
+  <div class="cta">
+    <div class="tag">
+      <svg class="tag-icon"><use href="#i-star"/></svg>
+      Pass iLottery. <em>Pay Oklahoma teachers more.</em>
+    </div>
+    <div class="note">Age-verified<br/>Geofenced to OK</div>
+  </div>
+
+</div>
+
+</body>
+</html>
